@@ -28,9 +28,194 @@
     // getting the URL (you may want to use for Exercise 3)
     var url = window.location.href;
 
-    // var socket = new WebSocket(
-    //     'ws://your url here:8765/');
+    var check = 0;
+  
+    // Create a new WebSocket.
+    //var socket = new WebSocket("p4-OscarDorado1138-oscardorado1138654087.codeanyapp.com:8000/draw/", ["protocolOne", "protocolTwo"]);
+    //var exampleSocket = new WebSocket(url, ["protocolOne", "protocolTwo"]);
+    // Show a connected message when the WebSocket is opened.
+    /*window.onload = 
+      var socket = new WebSocket('ws://p4-OscarDorado1138-oscardorado1138654087.codeanyapp.com:8765/');
+    }*/
+  
+  var client_tracker = 0;
+  var confirmed = 0;
+  var my_id = 0;
+  var client_path;
+  var paths;
+  var color_p;
+  var size = "";
+  var mode = "straight";
+  var tilt_check = 1;
+  
+  window.onload = function() 
+  {
+          //alert(String(global));
+          make_paths();
+          size = url.substr(79, url.length - 1);
+    
+  }
+  
 
 
+    //var client_path = path_1;
+    var socket = new WebSocket(
+      'ws://p4-OscarDorado1138-oscardorado1138654087.codeanyapp.com:8765/');
+  
+        // triggered when receiving a message from the server
+    socket.onmessage = function(event) 
+    {
+      // do something when you receive a message
+      //alert(receivedMessage);
+      //alert(receivedMessage[0]);
+      var msg_out = JSON.parse(event.data);
+      
+      if(check == 0)
+        {
+          if (client_tracker <= msg_out.client_id)
+            {
+              client_tracker = msg_out.client_id + 1;
+            }
+        }
+      //alert(client_tracker);
+      //alert(msg_out.text);
+      //alert(msg_out.x_point);
+      //alert(size);
+      if(msg_out.client_id == my_id || size == "large")
+        {
+          if (mode == "tilt")
+            {
+              paths[msg_out.client_id - 1].strokeColor = 'red';
+            }
+          else
+          {
+           paths[msg_out.client_id - 1].strokeColor = color_p[msg_out.client_id - 1];
+          }
+          paths[msg_out.client_id - 1].add
+          (
+              new paper.Point(
+                  msg_out.x_point, 
+                  msg_out.y_point)
+          ) 
+        }
+      /*
+      path_2.add
+      (
+        new paper.Point(
+                  parseInt(msg_out.x_point) + 10, 
+                  parseInt(msg_out.y_point) + 10)
+      )
+      */
+    };
+
+    //var message = "HELLOOOOO";
+    // use when sending a message to the server
+    // to be broadcasted to all clients
+    var path_send = 
+    {
+      x_point: "",
+      y_point: "",
+      client_id: 0
+    };
+  
+    var path_recieve = 
+    {
+      x_point: "",
+      y_point: "",
+      client_id: 0
+    };
+  
+
+  // Send the msg object as a JSON-formatted string.
+  //exampleSocket.send(JSON.stringify(msg));
+  
+    
+  
+    tool.onMouseDrag = function onMouseDrag(event)
+    {
+      //socket.send("Here's some text that the server is urgently awaiting!"); 
+          //alert("check");
+          //path.add(event.point);
+          if(check == 0)
+            {
+              my_id = client_tracker;
+              check = 1;
+              path_send.client_id = my_id;
+            }  
+          path_send.x_point = event.point.x;
+          path_send.y_point = event.point.y;   
+          socket.send(JSON.stringify(path_send));
+          //alert("second");
+        
+
+    }
+    
+window.ondeviceorientation = function(event) { 
+  if(event.gamma > 40 || event.gamma < -40)
+     {
+      //alert("tilt right!");
+       if (mode == "straight" && tilt_check == 1)
+         {
+           mode = "tilt";
+           tilt_check = 0;
+           //alert("tilt");
+         }
+       if(mode == "tilt" && tilt_check == 1)
+         {
+           mode = "straight";
+           //alert("straight");
+           tilt_check = 0;
+         }
+     }
+   if((event.gamma > -20 && event.gamma < 20))
+     {
+      tilt_check = 1;
+     }
+    //alert(event.alpha);    
+};
+window.addEventListener('deviceorientation', function(event) { });
+
+  window.addEventListener('devicemotion', function(event) {
+      var a = event.acceleration;
+      if (Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z) > 35 ) {
+        
+          paper.project.activeLayer.removeChildren();
+          //var secondLayer = new Layer();
+          //paths[msg_out.client_id - 1].strokeColor = 'white';
+        make_paths();
+        //path_new = new paper.Path();
+          //path_new.strokeColor = 'black';
+          //path_new.strokeWidth = 10;
+          //paths[msg_out.client_id - 1] = path_new;
+      }
+    });
+  
+  
+  function make_paths() 
+  {
+              //alert(String(global));
+          path_1 = new paper.Path();
+          path_1.strokeColor = 'black';
+          path_1.strokeWidth = 10;
+    
+          path_2 = new paper.Path();
+          path_2.strokeColor = 'red';
+          path_2.strokeWidth = 10;
+    
+          path_3 = new paper.Path();
+          path_3.strokeColor = 'blue';
+          path_3.strokeWidth = 10;
+    
+          path_4 = new paper.Path();
+          path_4.strokeColor = 'green';
+          path_4.strokeWidth = 10;
+    
+          client_tracker = client_tracker + 1;
+          client_path = path_1;
+          paths = [path_1, path_2, path_3, path_4];
+          color_p = ['black', 'red', 'blue', 'green']; 
+  }
+  
+  
 </script>
 </html>
