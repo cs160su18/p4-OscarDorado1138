@@ -180,13 +180,8 @@ window.addEventListener('deviceorientation', function(event) { });
       if (Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z) > 35 ) {
         
           paper.project.activeLayer.removeChildren();
-          //var secondLayer = new Layer();
-          //paths[msg_out.client_id - 1].strokeColor = 'white';
-        make_paths();
-        //path_new = new paper.Path();
-          //path_new.strokeColor = 'black';
-          //path_new.strokeWidth = 10;
-          //paths[msg_out.client_id - 1] = path_new;
+          make_paths();
+
       }
     });
   
